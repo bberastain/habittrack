@@ -1,5 +1,5 @@
 from werkzeug.security import generate_password_hash, check_password_hash
-from datetime import datetime
+from datetime import date
 from app import db, login
 from flask_login import UserMixin
 
@@ -29,12 +29,12 @@ class User(UserMixin, db.Model):
 class Habit(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     habit = db.Column(db.String(140))  # index so it views in same order?
-    start_date = db.Column(db.DateTime, default=datetime.utcnow)
+    start_date = db.Column(db.DateTime, default=date.today)
     # when you pass a function as a default, SQLAlchemy will set the field
     # to the value of calling that function
     # say x = datetime.utcnow(), so you need x.day
     # notice parenthesis here ^ but none over here ^
-    end_date = db.Column(db.DateTime)  # default= really far in the future
+    end_date = db.Column(db.DateTime, default=date(9999, 1, 1))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     completed = db.relationship('Completed', backref='habit', lazy='dynamic')
 

@@ -2,7 +2,5 @@
 
 {% block content %}
   <h1>Hello {{ current_user.username }}</h1>
-  {% for habit in habits %}
-  <div><p>{{ habit.habit }}</p></div>
-  {% endfor %}
+  <p><a href="{{ url_for('create') }}">Create New Habit</a></p>
 {% endblock %}
