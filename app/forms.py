@@ -34,7 +34,7 @@ class RegistrationForm(FlaskForm):
 
 
 class CreateForm(FlaskForm):
-    habit = StringField('Habit', validators=[DataRequired()])
+    habit = StringField('Habit', validators=[DataRequired('something')])
     # how do I make "description" visibile to users?
     start_date = DateField('Start Date', default=date.today,
                            validators=[Optional()], description="Optional, \
@@ -46,5 +46,8 @@ class CreateForm(FlaskForm):
 
 
 class EditForm(FlaskForm):  # I could just inherit CreateForm
-    habit = SelectField('Select Habit', coerce=int)
-    submit = SubmitField('Edit Habit')
+    habit = StringField('Habit', validators=[DataRequired()])
+    # how do I make "description" visibile to users?
+    start_date = DateField('Start Date', validators=[Optional()])
+    end_date = DateField('End Date', validators=[Optional()])
+    submit = SubmitField('Submit')

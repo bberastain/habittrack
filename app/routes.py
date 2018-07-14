@@ -73,12 +73,17 @@ def create():
     return render_template('create.html', title='Create Habit', form=form)
 
 
+# have to make this a PUT method (both here and template)? db.session.edit?
 @app.route('/edit', methods=['GET', 'POST'])
 @login_required
 def edit():
-    form = EditForm()
-    form.habit.choices = [(x.id, x.habit) for x in
-                          Habit.query.filter_by(user_id=current_user.id)]
+    #
+    # the field is currently pre populated with the first habit
+    # how do I take the habit choice made on the last screen?
+    #
+    habit = Habit.query.filter_by(user_id=current_user.id).first()
+    form = EditForm(habit=habit.habit, start_date=habit.start_date,
+                    end_date=habit.end_date)
     if form.validate_on_submit():
         flash('Nice')
         return redirect(url_for('index'))

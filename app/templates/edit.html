@@ -1,17 +1,37 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<form action="" method="post">
+<h1>Edit Habit</h1>
+<form action='' method='post'>
 {{ form.hidden_tag() }}
 
-<select>
-{% for habit in form.habit %}
-<option value='{{ id }}'>{{ habit }}</option>
-{% endfor %}
-</select>
+<p>
+{{ form.habit.label }}<br>
+{{ form.habit(size=32) }}
 {% for error in form.habit.errors %}
-<span style="color: red;">[{{ error }}]</span>
+<span style='color: red;'>[{{ error }}]</span>
 {% endfor %}
+</p>
+<p>Enter dates as year-month-day<br>
+  e.g. 2018-01-01</p>
+
+<p>
+{{ form.start_date.label }}<br>
+{{ form.start_date(size=10) }}
+{% for error in form.start_date.errors %}
+<span style='color: red;'>[{{ error }}]</span>
+{% endfor %}
+</p>
+
+<p>
+{{ form.end_date.label }}<br>
+{{ form.end_date(size=10) }}
+{% for error in form.end_date.errors %}
+<span style='color: red;'>[{{ error }}]</span>
+{% endfor %}
+</p>
+
+
 <p>{{ form.submit() }}</p>
 </form>
 {% endblock %}
