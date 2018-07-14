@@ -4,6 +4,11 @@ from app import db, login
 from flask_login import UserMixin
 
 
+@login.user_loader
+def load_user(id):
+    return User.query.get(int(id))
+
+
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), index=True, unique=True)
@@ -29,12 +34,12 @@ class User(UserMixin, db.Model):
 class Habit(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     habit = db.Column(db.String(140))  # index so it views in same order?
-    start_date = db.Column(db.DateTime, default=date.today)
+    start_date = db.Column(db.Date, default=date.today)
     # when you pass a function as a default, SQLAlchemy will set the field
     # to the value of calling that function
     # say x = datetime.utcnow(), so you need x.day
     # notice parenthesis here ^ but none over here ^
-    end_date = db.Column(db.DateTime, default=date(9999, 1, 1))
+    end_date = db.Column(db.Date, default=date(9999, 1, 1))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     completed = db.relationship('Completed', backref='habit', lazy='dynamic')
 
@@ -51,8 +56,3 @@ class Completed(db.Model):
 
     def __repr__(self):
         return '<Completed: {}>'.format(self.date)
-
-
-@login.user_loader
-def load_user(id):
-    return User.query.get(int(id))

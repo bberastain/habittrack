@@ -4,13 +4,32 @@ from app.forms import LoginForm, RegistrationForm, CreateForm
 from flask_login import current_user, login_user, logout_user, login_required
 from app.models import User, Habit  # ,Completed
 from werkzeug.urls import url_parse
+from datetime import date
 
 
 @app.route('/')
 @app.route('/index')
 @login_required
 def index():
-    return render_template("index.html", title='Home Page')  # , habits=habits)
+    habits = Habit.query.filter_by(user_id=current_user.id).all()
+
+    def is_between(start_date, end_date, today):
+
+        #
+        # save as utc seconds and compare those instead!!!
+        # Only the view function needs to see it in calendar form
+        #
+        return True
+
+    days_habits = []
+    today = date.today()
+    for habit in habits:
+        if is_between(habit.start_date, today, habit.end_date):
+            days_habits.append(habit.habit)
+    return render_template("index.html", title='Home Page', habits=days_habits)
+
+# user = User.query.filter_by(username=current_user).first()
+# habits = Habit.query.filter_by(current_user.habit)
 # fits in a "for habit in habits" block in the 'index' template
 # find out the logic they use for "posts", equivalent of "habits"
 # I guess it'd be a form that gets submitted
@@ -38,7 +57,6 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for('index'))
-# what happens if I enter this url directly while not logged in?
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -62,7 +80,7 @@ def create():
     form = CreateForm()
     if form.validate_on_submit():
         habit = Habit(habit=form.habit.data, start_date=form.start_date.data,
-                      end_date=form.end_date.data)
+                      end_date=form.end_date.data, user_id=current_user.id)
         db.session.add(habit)
         db.session.commit()
         flash('New habit created')
