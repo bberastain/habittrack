@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<form action="" method="post">
+{{ form.hidden_tag() }}
+
+<select>
+{% for habit in form.habit %}
+<option value='{{ id }}'>{{ habit }}</option>
+{% endfor %}
+</select>
+{% for error in form.habit.errors %}
+<span style="color: red;">[{{ error }}]</span>
+{% endfor %}
+<p>{{ form.submit() }}</p>
+</form>
+{% endblock %}

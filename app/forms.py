@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, \
-                    DateField
+                    DateField, SelectField
 from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, \
                                Optional
 from app.models import User
@@ -43,3 +43,8 @@ class CreateForm(FlaskForm):
                          validators=[Optional()], description='Optional, \
                          defaults to 9999-01-01')
     submit = SubmitField('Submit')
+
+
+class EditForm(FlaskForm):  # I could just inherit CreateForm
+    habit = SelectField('Select Habit', coerce=int)
+    submit = SubmitField('Edit Habit')
