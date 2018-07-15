@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<form action="" method="post">
+{{ form.hidden_tag() }}
+<h1>Select Habit to Edit</h1>
+<p>
+{{ form.habit }}
+</p>
+
+<p>{{ form.submit() }}</p>
+</form>
+{% endblock %}

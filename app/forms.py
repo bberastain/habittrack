@@ -45,9 +45,13 @@ class CreateForm(FlaskForm):
     submit = SubmitField('Submit')
 
 
-class EditForm(FlaskForm):  # I could just inherit CreateForm
+class SelectForm(FlaskForm):
+    habit = SelectField('Select Habit', coerce=int)
+    submit = SubmitField('Edit Habit')
+
+
+class EditForm(FlaskForm):  # Could I just inherit CreateForm?
     habit = StringField('Habit', validators=[DataRequired()])
-    # how do I make "description" visibile to users?
     start_date = DateField('Start Date', validators=[Optional()])
     end_date = DateField('End Date', validators=[Optional()])
     submit = SubmitField('Submit')
