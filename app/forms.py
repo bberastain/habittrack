@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, \
-                    DateField, SelectField
+                    DateField, SelectField, SelectMultipleField, widgets
 from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, \
                                Optional
 from app.models import User
@@ -54,4 +54,11 @@ class EditForm(FlaskForm):  # Could I just inherit CreateForm?
     habit = StringField('Habit', validators=[DataRequired()])
     start_date = DateField('Start Date', validators=[Optional()])
     end_date = DateField('End Date', validators=[Optional()])
+    submit = SubmitField('Submit')
+
+
+class CompleteForm(FlaskForm):
+    habits = SelectMultipleField('Habits', coerce=int,
+                                 widget=widgets.ListWidget(prefix_label=False),
+                                 option_widget=widgets.CheckboxInput())
     submit = SubmitField('Submit')

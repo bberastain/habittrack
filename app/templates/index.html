@@ -3,8 +3,12 @@
 {% block content %}
   <h1>Hello {{ current_user.username }}</h1>
 
-{% for habit in habits %}
-<div><p>{{ habit }}</p></div>
-{% endfor %}
+  <form action="" method="post">
+  {{ form.hidden_tag() }}
+  <p>
+  {{ form.habits }}
+  </p>
 
+  <p>{{ form.submit() }}</p>
+  </form>
 {% endblock %}

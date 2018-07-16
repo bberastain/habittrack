@@ -1,24 +1,32 @@
 from flask import session, render_template, flash, redirect, url_for, request
 from app import app, db
 from app.forms import LoginForm, RegistrationForm, CreateForm, SelectForm, \
-                      EditForm
+                      EditForm, CompleteForm
 from flask_login import current_user, login_user, logout_user, login_required
 from app.models import User, Habit  # ,Completed
 from werkzeug.urls import url_parse
 from datetime import date
 
 
-@app.route('/')
-@app.route('/index')
+# populates a SelectMultipleField with habits of given day
+@app.route('/', methods=['GET', 'POST'])
+@app.route('/index', methods=['GET', 'POST'])
 @login_required
 def index():
-    habits = Habit.query.filter_by(user_id=current_user.id).all()
+    all_habits = Habit.query.filter_by(user_id=current_user.id).all()
     days_habits = []
     today = date.today()
-    for habit in habits:
+    for habit in all_habits:
         if habit.start_date <= today <= habit.end_date:
-            days_habits.append(habit.habit)
-    return render_template("index.html", title='Home Page', habits=days_habits)
+            days_habits.append(habit)
+    form = CompleteForm()
+    form.habits.choices = [(x.id, x.habit) for x in days_habits]
+    if form.validate_on_submit():
+        # what am I even submitting?
+        thing = form.habits.data
+        flash(thing)
+        return redirect(url_for('create'))
+    return render_template("index.html", title='Home Page', form=form)
 
 
 @app.route('/login', methods=['GET', 'POST'])
