@@ -1,32 +1,69 @@
 from flask import session, render_template, flash, redirect, url_for, request
 from app import app, db
-from app.forms import LoginForm, RegistrationForm, CreateForm, SelectForm, \
-                      EditForm, CompleteForm
+from app.forms import LoginForm, RegistrationForm, CreateForm, \
+                      SelectHabitForm, EditForm, CompleteForm, SelectDateForm
 from flask_login import current_user, login_user, logout_user, login_required
-from app.models import User, Habit  # ,Completed
+from app.models import User, Habit, Completed
 from werkzeug.urls import url_parse
 from datetime import date
 
 
-# populates a SelectMultipleField with habits of given day
+#
+# the "sessions" started could be a security hazard,
+# the Flask documentation talks about how to encrypt it
+#
+
+
+# I might have messed up in trying to isolate this from index
+# but I think it needs to be done somehow
+# instead of trying to pass a datetime.date in sessions
+# I could have dropdowns that can pass integers
+# then construct the datetime.date
+# or best option, use a datepicker someone else made
+def habits_given_date(day):
+    # accepts datetime.date
+    all_habits = Habit.query.filter_by(user_id=current_user.id).all()
+    days_habits = []
+    for habit in all_habits:
+        if habit.start_date <= day <= habit.end_date:
+            days_habits.append(habit)
+    return days_habits
+
+
+# needs to prepopulate with habits done that day
+# at which point it should redirect to itself (index)
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/index', methods=['GET', 'POST'])
 @login_required
 def index():
-    all_habits = Habit.query.filter_by(user_id=current_user.id).all()
-    days_habits = []
-    today = date.today()
-    for habit in all_habits:
-        if habit.start_date <= today <= habit.end_date:
-            days_habits.append(habit)
+    if session.get('selected_date') is not None:
+        y = session['selected_date']
+        flash(y)
+        return redirect(url_for('create'))
+        # days_habits = habits_given_date(y)
+    else:
+        days_habits = habits_given_date(date.today())
     form = CompleteForm()
     form.habits.choices = [(x.id, x.habit) for x in days_habits]
     if form.validate_on_submit():
-        # what am I even submitting?
-        thing = form.habits.data
-        flash(thing)
+        completed = form.habits.data
+        for id in completed:
+            checkbox = Completed(date=date.today(), habit_id=id)
+            db.session.add(checkbox)
+            db.session.commit()
+        flash('Completed Habits Updated')
         return redirect(url_for('create'))
     return render_template("index.html", title='Home Page', form=form)
+
+
+@app.route('/select_date', methods=['GET', 'POST'])
+@login_required
+def select_date():
+    form = SelectDateForm()
+    if form.validate_on_submit():
+        session['selected_date'] = form.select_date.data
+        return redirect(url_for('index'))
+    return render_template("select_date.html", title='Select Date', form=form)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -82,21 +119,17 @@ def create():
     return render_template('create.html', title='Create Habit', form=form)
 
 
-@app.route('/select', methods=['GET', 'POST'])
+@app.route('/select_habit', methods=['GET', 'POST'])
 @login_required
-def select():
-    form = SelectForm()
+def select_habit():
+    form = SelectHabitForm()
     form.habit.choices = [(x.id, x.habit) for x in
                           Habit.query.filter_by(user_id=current_user.id)]
     if form.validate_on_submit():
         session['habit'] = form.habit.data
         return redirect(url_for('edit'))
-    return render_template('select.html', title='Select Habit', form=form)
-#
-# the "session" started in "select" and used in "edit"
-# could be a security hazard, the Flask documentation
-# talks about how to encrypt this
-#
+    return render_template('select_habit.html', title='Select Habit',
+                           form=form)
 
 
 @app.route('/edit', methods=['GET', 'POST'])

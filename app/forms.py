@@ -45,16 +45,21 @@ class CreateForm(FlaskForm):
     submit = SubmitField('Submit')
 
 
-class SelectForm(FlaskForm):
-    habit = SelectField('Select Habit', coerce=int)
-    submit = SubmitField('Edit Habit')
-
-
 class EditForm(FlaskForm):  # Could I just inherit CreateForm?
     habit = StringField('Habit', validators=[DataRequired()])
     start_date = DateField('Start Date', validators=[Optional()])
     end_date = DateField('End Date', validators=[Optional()])
     submit = SubmitField('Submit')
+
+
+class SelectDateForm(FlaskForm):
+    select_date = DateField('Date', validators=[DataRequired()])
+    submit = SubmitField('Submit')
+
+
+class SelectHabitForm(FlaskForm):
+    habit = SelectField('Select Habit', coerce=int)
+    submit = SubmitField('Edit Habit')
 
 
 class CompleteForm(FlaskForm):
