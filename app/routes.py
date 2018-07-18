@@ -12,14 +12,17 @@ from datetime import date
 # the Flask documentation talks about how to encrypt it
 
 
-# I might have messed up in trying to isolate this from index
-# but I think it needs to be done somehow
+def date_from_string(day):
+    temp = day.split('-')
+    year, month, day = int(temp[0]), int(temp[1]), int(temp[2])
+    day = date(year, month, day)
+    return day
+
+
 def habits_given_date(day):
     # accepts datetime.date or string
     if type(day) == str:
-        temp = day.split('-')
-        year, month, day = int(temp[0]), int(temp[1]), int(temp[2])
-        day = date(year, month, day)
+        day = date_from_string(day)
     all_habits = Habit.query.filter_by(user_id=current_user.id).all()
     days_habits = []
     for habit in all_habits:
@@ -29,32 +32,51 @@ def habits_given_date(day):
 
 
 # needs to prepopulate with habits done that day
-# at which point it should redirect to itself (index)
+# delete capability, don't commit multiples
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/index', methods=['GET', 'POST'])
 @login_required
 def index():
+    # to display current date in template
+    cd = date.today().strftime('%Y-%m-%d')  # current date
+
+    # to display habits for given date
     if session.get('today'):
         day = session['today']
-        days_habits = habits_given_date(day)
     else:
         day = date.today()
-        days_habits = habits_given_date(day)
-    hform = CompleteForm(prefix='hform')
+        # day = day.strftime('%Y-%m-%d')
+        # add above line or rework code, so that 'if today==day' in template
+        # returns true upon login (currently compares str to datetime.date)
+    days_habits = habits_given_date(day)
+
+    habit_ids = []
+    for habit in days_habits:
+        habit_ids.append(habit.id)
+    hform = CompleteForm(prefix='hform')  # habits form
     hform.habits.choices = [(x.id, x.habit) for x in days_habits]
+
+    # to submit update to completed habits
     if hform.validate_on_submit() and hform.submit.data:
         completed = hform.habits.data  # checked boxes
         for id in completed:
-            checkbox = Completed(date=date.today(), habit_id=id)
+            if type(day) == str:
+                checkbox = Completed(date=date_from_string(day), habit_id=id)
+            else:
+                checkbox = Completed(date=day, habit_id=id)
             db.session.add(checkbox)
             db.session.commit()
         flash('Completed Habits Updated')
         return redirect(url_for('index'))
+
+    # to submit selected date
     sdform = SelectDateForm(prefix='sdform')  # select_date_form
     if sdform.validate_on_submit() and sdform.submit.data:
         session['today'] = sdform.select_date.data.strftime('%Y-%m-%d')
         return redirect(url_for('index'))
-    return render_template('index.html', hform=hform, sdform=sdform, day=day)
+
+    return render_template('index.html', hform=hform, sdform=sdform, day=day,
+                           today=cd, days_habits=days_habits)
 
 
 @app.route('/login', methods=['GET', 'POST'])

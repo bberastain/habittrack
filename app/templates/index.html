@@ -2,16 +2,26 @@
 
 {% block content %}
   <h1>Hello {{ current_user.username }}</h1>
-  <p>Showing habits for <b>{{ day }}</b></p>
+  {% if today == day %}
+  <p>Today is <b>{{ today }}</b></p>
+  {% else %}
+  <p>Today is <b>{{ today }}</b></p>
+  <p>Displaying habits for <b>{{ day }}</b></p>
+  {% endif %}
 
+{% if not days_habits %}
+  <a href="{{ url_for('create') }}">Create a habit</a>
+{% else %}
 <form name="hform" action="" method="post">
   {{ hform.hidden_tag() }}
+
   <p>
   {{ hform.habits }}
   </p>
 
   <p>{{ hform.submit() }}</p>
 </form>
+{% endif %}
 
 <form name="sdform" action="" method="post">
   {{ sdform.hidden_tag() }}
