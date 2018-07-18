@@ -2,13 +2,23 @@
 
 {% block content %}
   <h1>Hello {{ current_user.username }}</h1>
+  <p>Showing habits for <b>{{ day }}</b></p>
 
-  <form action="" method="post">
-  {{ form.hidden_tag() }}
+<form name="hform" action="" method="post">
+  {{ hform.hidden_tag() }}
   <p>
-  {{ form.habits }}
+  {{ hform.habits }}
   </p>
 
-  <p>{{ form.submit() }}</p>
-  </form>
+  <p>{{ hform.submit() }}</p>
+</form>
+
+<form name="sdform" action="" method="post">
+  {{ sdform.hidden_tag() }}
+  <p>
+  {{ sdform.select_date }}
+  </p>
+
+  <p>{{ sdform.submit() }}</p>
+</form>
 {% endblock %}
