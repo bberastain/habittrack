@@ -21,7 +21,9 @@ def date_from_string(day):
 
 
 def habits_given_date(day):
-    # accepts datetime.date
+    # accepts datetime.date or string
+    if type(day) == str:
+        day = date_from_string(day)
     all_habits = Habit.query.filter_by(user_id=current_user.id).all()
     days_habits = []
     for habit in all_habits:
