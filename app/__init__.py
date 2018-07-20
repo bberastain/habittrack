@@ -4,24 +4,17 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager
 from flask_mail import Mail
+# from flask_bootstrap import Bootstrap
 import logging
 from logging.handlers import SMTPHandler, RotatingFileHandler
 import os
 
-app = Flask(__name__)
 
-
-from app.auth import bp as auth_bp
-app.register_blueprint(auth_bp, url_prefix='/auth')
-
-app.config.from_object(Config)
-
-
-db = SQLAlchemy(app)
-migrate = Migrate(app, db)
-login = LoginManager(app)
+db = SQLAlchemy()
+migrate = Migrate()
+login = LoginManager()
 login.login_view = 'login'
-mail = Mail(app)
+mail = Mail()
 # bootstrap = Bootstrap()
 
 
@@ -34,6 +27,15 @@ def create_app(config_class=Config):
     login.init_app(app)
     mail.init_app(app)
     # bootstrap.init_app(app)
+
+    from app.errors import bp as errors_bp
+    app.register_blueprint(errors_bp)
+
+    from app.auth import bp as auth_bp
+    app.register_blueprint(auth_bp, url_prefix='/auth')
+
+    from app.main import bp as main_bp
+    app.register_blueprint(main_bp)
 
     if not app.debug:
         if app.config['MAIL_SERVER']:
@@ -50,9 +52,10 @@ def create_app(config_class=Config):
                 credentials=auth, secure=secure)
             mail_handler.setLevel(logging.ERROR)
             app.logger.addHandler(mail_handler)
+
         if not os.path.exists('logs'):
             os.mkdir('logs')
-        file_handler = RotatingFileHandler('logs/microblog.log', maxBytes=10240,
+        file_handler = RotatingFileHandler('logs/habittrack.log', maxBytes=10240,
                                            backupCount=10)
         file_handler.setFormatter(logging.Formatter(
             '%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]'))
@@ -64,4 +67,4 @@ def create_app(config_class=Config):
 
     return app
 
-from app import routes, models
+from app import models

@@ -11,7 +11,7 @@
   {% endif %}
 
 {% if not days_habits %}
-  <a href="{{ url_for('create') }}">Create a habit</a>
+  <a href="{{ url_for('main.create') }}">Create a habit</a>
 {% else %}
 <form name="hform" action="" method="post">
   {{ hform.hidden_tag() }}

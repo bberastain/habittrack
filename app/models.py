@@ -1,6 +1,6 @@
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import date
-from app import app, db, login
+from app import db, login
 from flask_login import UserMixin
 from time import time
 import jwt
