@@ -1,14 +1,11 @@
 from flask import session, render_template, flash, redirect, url_for, request
-from app import app, db
-from app.forms import LoginForm, RegistrationForm, CreateForm, \
-                      SelectHabitForm, EditForm, CompleteForm, \
-                      SelectDateForm, ResetPasswordRequestForm, \
-                      ResetPasswordForm
-from app.email import send_password_reset_email
-from flask_login import current_user, login_user, logout_user, login_required
-from app.models import User, Habit, Completed
-from werkzeug.urls import url_parse
+from app import db
+from app.main.forms import CreateForm, SelectHabitForm, EditForm, \
+    CompleteForm, SelectDateForm
+from flask_login import current_user, login_required
+from app.models import Habit, Completed
 from datetime import date
+from app.main import bp
 
 
 # the "sessions" started could be a security hazard,
@@ -37,8 +34,8 @@ def habits_given_date(day):
 
 # still need to prepopulate with completed habits,
 # check them against submitted data, and edit database accordingly
-@app.route('/', methods=['GET', 'POST'])
-@app.route('/index', methods=['GET', 'POST'])
+@bp.route('/', methods=['GET', 'POST'])
+@bp.route('/index', methods=['GET', 'POST'])
 @login_required
 def index():
     # initial datetime.date
@@ -79,58 +76,19 @@ def index():
             db.session.delete(x[0])
             db.session.commit()
         flash('Completed Habits Updated')
-        return redirect(url_for('index'))
+        return redirect(url_for('main.index'))
 
     # submit selected date
     sdform = SelectDateForm(prefix='sdform')  # select-date form
     if sdform.validate_on_submit() and sdform.submit.data:
         session['today'] = sdform.select_date.data.strftime('%Y-%m-%d')
-        return redirect(url_for('index'))
+        return redirect(url_for('main.index'))
 
     return render_template('index.html', hform=hform, sdform=sdform,
                            d1=date.today(), d2=ddate, days_habits=days_habits)
 
 
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    if current_user.is_authenticated:
-        return redirect(url_for('index'))
-    form = LoginForm()
-    if form.validate_on_submit():
-        user = User.query.filter_by(username=form.username.data).first()
-        if user is None or not user.check_password(form.password.data):
-            flash('Invalid username or password')
-            return redirect(url_for('login'))
-        login_user(user, remember=form.remember_me.data)
-        next_page = request.args.get('next')
-        if not next_page or url_parse(next_page).netloc != '':
-            next_page = url_for('index')
-        return redirect(next_page)
-    return render_template('login.html', title='Sign In', form=form)
-
-
-@app.route('/logout')
-def logout():
-    logout_user()
-    return redirect(url_for('index'))
-
-
-@app.route('/register', methods=['GET', 'POST'])
-def register():
-    if current_user.is_authenticated:
-        return redirect(url_for('index'))
-    form = RegistrationForm()
-    if form.validate_on_submit():
-        user = User(username=form.username.data, email=form.email.data)
-        user.set_password(form.password.data)
-        db.session.add(user)
-        db.session.commit()
-        flash('Congratulations, you are now a registered user!')
-        return redirect(url_for('login'))
-    return render_template('register.html', title='Register', form=form)
-
-
-@app.route('/create', methods=['GET', 'POST'])
+@bp.route('/create', methods=['GET', 'POST'])
 @login_required
 def create():
     form = CreateForm()
@@ -140,11 +98,11 @@ def create():
         db.session.add(habit)
         db.session.commit()
         flash('New habit created')
-        return redirect(url_for('index'))
+        return redirect(url_for('main.index'))
     return render_template('create.html', title='Create Habit', form=form)
 
 
-@app.route('/select_habit', methods=['GET', 'POST'])
+@bp.route('/select_habit', methods=['GET', 'POST'])
 @login_required
 def select_habit():
     form = SelectHabitForm()
@@ -152,12 +110,12 @@ def select_habit():
                           Habit.query.filter_by(user_id=current_user.id)]
     if form.validate_on_submit():
         session['habit'] = form.habit.data
-        return redirect(url_for('edit'))
+        return redirect(url_for('main.edit'))
     return render_template('select_habit.html', title='Select Habit',
                            form=form)
 
 
-@app.route('/edit', methods=['GET', 'POST'])
+@bp.route('/edit', methods=['GET', 'POST'])
 @login_required
 def edit():
     x = session['habit']
@@ -170,42 +128,11 @@ def edit():
         habit.end_date = form.end_date.data
         db.session.commit()
         flash('Habit edited')
-        return redirect(url_for('index'))
+        return redirect(url_for('main.index'))
     return render_template('edit.html', title='Edit Habit', form=form)
 
 
-@app.route('/reset_password_request', methods=['GET', 'POST'])
-def reset_password_request():
-    if current_user.is_authenticated:
-        return redirect(url_for('index'))
-    form = ResetPasswordRequestForm()
-    if form.validate_on_submit():
-        user = User.query.filter_by(email=form.email.data).first()
-        if user:
-            send_password_reset_email(user)
-        flash('Check your email for the instructions to reset your password')
-        return redirect(url_for('login'))
-    return render_template('reset_password_request.html',
-                           title='Reset Password', form=form)
-
-
-@app.route('/reset_password/<token>', methods=['GET', 'POST'])
-def reset_password(token):
-    if current_user.is_authenticated:
-        return redirect(url_for('index'))
-    user = User.verify_reset_password_token(token)
-    if not user:
-        return redirect(url_for('index'))
-    form = ResetPasswordForm()
-    if form.validate_on_submit():
-        user.set_password(form.password.data)
-        db.session.commit()
-        flash('Your password has been reset.')
-        return redirect(url_for('login'))
-    return render_template('reset_password.html', form=form)
-
-
-@app.route('/stats', methods=['GET'])
+@bp.route('/stats', methods=['GET'])
 @login_required
 def stats():
     # for each habit display totals as a fraction and percentage

@@ -11,13 +11,13 @@
 <body>
 <div>
   HabitTrack
-    <a href="{{ url_for('index') }}">Home</a>
+    <a href="{{ url_for('main.index') }}">Home</a>
     {% if current_user.is_anonymous %}
-    <a href="{{ url_for('login') }}">Login</a>
+    <a href="{{ url_for('auth.login') }}">Login</a>
     {% else %}
-    <a href="{{ url_for('logout') }}">Logout</a>
-    <a href="{{ url_for('create') }}">Create Habit</a>
-    <a href="{{ url_for('select_habit') }}">Edit Habits</a>
+    <a href="{{ url_for('auth.logout') }}">Logout</a>
+    <a href="{{ url_for('main.create') }}">Create Habit</a>
+    <a href="{{ url_for('main.select_habit') }}">Edit Habits</a>
     {% endif %}
 </div>
 <hr>
