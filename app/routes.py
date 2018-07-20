@@ -54,34 +54,27 @@ def index():
     # prepopulate habits
     if request.method == 'GET':
         habit_ids = [habit.id for habit in days_habits]
-        completed = Completed.query.filter_by(date
-                        =ddate).filter(Completed.habit_id.in_(habit_ids)).all()
+        completed = Completed.query.filter_by(
+            date=ddate).filter(Completed.habit_id.in_(habit_ids)).all()
         selected = [i.habit_id for i in completed]
         hform.habits.data = selected
+        session['done'] = selected
 
     # submit update to completed habits
     if hform.validate_on_submit() and hform.submit.data:
-        habit_ids = [habit.id for habit in days_habits]
-        completed = Completed.query.filter_by(date
-                        =ddate).filter(Completed.habit_id.in_(habit_ids)).all()
-        previous = [i.habit_id for i in completed]
-
+        previous = session['done']
         done = hform.habits.data  # checked boxes
-        flash(done)
-        # previous = session['done']
-        new = []
         for id in done:
-            if id not in previous:
-                new.append(id)
             if id in previous:
+                done.remove(id)
                 previous.remove(id)
-        for id in new:
-            checkbox = Completed(date=ddate, habit_id=id)
-            db.session.add(checkbox)
+        for id in done:
+            x = Completed(date=ddate, habit_id=id)
+            db.session.add(x)
             db.session.commit()
         for id in previous:
-            checkbox = Completed.query.filter_by(date=ddate).filter_by(habit_id=id)
-            db.session.delete(checkbox[0])
+            x = Completed.query.filter_by(date=ddate).filter_by(habit_id=id)
+            db.session.delete(x[0])
             db.session.commit()
         flash('Completed Habits Updated')
         return redirect(url_for('index'))
