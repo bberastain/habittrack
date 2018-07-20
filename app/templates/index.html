@@ -3,7 +3,8 @@
 {% block content %}
   <h1>Hello {{ current_user.username }}</h1>
   {% if d1 == d2 %}
-  <p>Today is <b>{{ d1 }}</b></p>
+  <p>It is <b>{{ d1 }}</b><br>
+    Here are your habits for today:</p>
   {% else %}
   <p>Today is <b>{{ d1 }}</b></p>
   <p>Displaying habits for <b>{{ d2 }}</b></p>

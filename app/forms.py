@@ -68,3 +68,20 @@ class CompleteForm(FlaskForm):
                                  widget=widgets.TableWidget(),
                                  option_widget=widgets.CheckboxInput())
     submit = SubmitField('Submit Completed Habits')
+
+#################
+
+
+class ChoiceObj(object):
+    def __init__(self, name, choices):
+        setattr(self, name, choices)
+
+
+class MultiCheckboxField(SelectMultipleField):
+    widget = widgets.TableWidget()
+    option_widget = widgets.CheckboxInput()
+
+
+class HabitTrackForm(FlaskForm):
+    submit = SubmitField('Save')
+    habits = MultiCheckboxField(None)

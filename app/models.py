@@ -51,8 +51,8 @@ class Habit(db.Model):
 
 class Completed(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    date = db.Column(db.DateTime)  # the date of the view function?
+    date = db.Column(db.Date)  # the date of the view function?
     habit_id = db.Column(db.Integer, db.ForeignKey('habit.id'))
 
     def __repr__(self):
-        return '<Completed: {}>'.format(self.date)
+        return '<Completed: id-{}, date-{}>'.format(self.id, self.date)

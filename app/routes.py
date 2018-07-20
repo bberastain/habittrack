@@ -8,6 +8,7 @@ from app.models import User, Habit, Completed
 from werkzeug.urls import url_parse
 from datetime import date
 
+
 # the "sessions" started could be a security hazard,
 # the Flask documentation talks about how to encrypt it
 
@@ -39,32 +40,53 @@ def habits_given_date(day):
 @login_required
 def index():
     # initial datetime.date
-    ddate = date.today()
     if session.get('today'):
         dstring = session['today']
         ddate = date_from_string(dstring)
+    else:
+        ddate = date.today()
 
     # display habits
     days_habits = habits_given_date(ddate)
     hform = CompleteForm(prefix='hform')  # habits form
     hform.habits.choices = [(x.id, x.habit) for x in days_habits]
 
-    # HOW DO I PREPOPULATE!?!?!??
-    # ticked =
-    # Completed.query.filter(date == ddate)
-    # .filter(habit_id == days_habits).all()
+    # prepopulate habits
+    if request.method == 'GET':
+        habit_ids = [habit.id for habit in days_habits]
+        completed = Completed.query.filter_by(date
+                        =ddate).filter(Completed.habit_id.in_(habit_ids)).all()
+        selected = [i.habit_id for i in completed]
+        hform.habits.data = selected
 
-    # to submit update to completed habits
+    # submit update to completed habits
     if hform.validate_on_submit() and hform.submit.data:
-        completed = hform.habits.data  # checked boxes
-        for id in completed:
+        habit_ids = [habit.id for habit in days_habits]
+        completed = Completed.query.filter_by(date
+                        =ddate).filter(Completed.habit_id.in_(habit_ids)).all()
+        previous = [i.habit_id for i in completed]
+
+        done = hform.habits.data  # checked boxes
+        flash(done)
+        # previous = session['done']
+        new = []
+        for id in done:
+            if id not in previous:
+                new.append(id)
+            if id in previous:
+                previous.remove(id)
+        for id in new:
             checkbox = Completed(date=ddate, habit_id=id)
             db.session.add(checkbox)
+            db.session.commit()
+        for id in previous:
+            checkbox = Completed.query.filter_by(date=ddate).filter_by(habit_id=id)
+            db.session.delete(checkbox[0])
             db.session.commit()
         flash('Completed Habits Updated')
         return redirect(url_for('index'))
 
-    # to submit selected date
+    # submit selected date
     sdform = SelectDateForm(prefix='sdform')  # select-date form
     if sdform.validate_on_submit() and sdform.submit.data:
         session['today'] = sdform.select_date.data.strftime('%Y-%m-%d')
