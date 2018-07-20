@@ -2,7 +2,9 @@ from flask import session, render_template, flash, redirect, url_for, request
 from app import app, db
 from app.forms import LoginForm, RegistrationForm, CreateForm, \
                       SelectHabitForm, EditForm, CompleteForm, \
-                      SelectDateForm
+                      SelectDateForm, ResetPasswordRequestForm, \
+                      ResetPasswordForm
+from app.email import send_password_reset_email
 from flask_login import current_user, login_user, logout_user, login_required
 from app.models import User, Habit, Completed
 from werkzeug.urls import url_parse
@@ -170,3 +172,55 @@ def edit():
         flash('Habit edited')
         return redirect(url_for('index'))
     return render_template('edit.html', title='Edit Habit', form=form)
+
+
+@app.route('/reset_password_request', methods=['GET', 'POST'])
+def reset_password_request():
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+    form = ResetPasswordRequestForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        if user:
+            send_password_reset_email(user)
+        flash('Check your email for the instructions to reset your password')
+        return redirect(url_for('login'))
+    return render_template('reset_password_request.html',
+                           title='Reset Password', form=form)
+
+
+@app.route('/reset_password/<token>', methods=['GET', 'POST'])
+def reset_password(token):
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+    user = User.verify_reset_password_token(token)
+    if not user:
+        return redirect(url_for('index'))
+    form = ResetPasswordForm()
+    if form.validate_on_submit():
+        user.set_password(form.password.data)
+        db.session.commit()
+        flash('Your password has been reset.')
+        return redirect(url_for('login'))
+    return render_template('reset_password.html', form=form)
+
+
+@app.route('/stats', methods=['GET'])
+@login_required
+def stats():
+    # for each habit display totals as a fraction and percentage
+    today = date.today()
+    all_habits = Habit.query.filter_by(user_id=current_user.id).filter_by.all()
+    for habit in all_habits:
+        pass
+        # use 'datetime' module to find the difference in days here
+        # total = today - habit.start_date (find "length" as an integer)
+
+        # done = Completed.query.filter_by(habit_id=habit.id)
+        # further filter by completed.date <= habit.end_date
+        # then find the length of the list returned
+
+        # use 'decimal' module here to round to one or two places
+        # percentage = done/total
+
+    return render_template('stats.html', title='Habit Stats')
