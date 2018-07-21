@@ -2,6 +2,18 @@
 
 {% block content %}
 <h1>Habit Stats</h1>
-
-
+<table>
+  <tr>
+    <th>Habit</th>
+    <th>Total</th>
+    <th>%</th>
+  </tr>
+  {% for habit, total, completed, percent in stats %}
+    <tr>
+      <td>{{ habit }}</td>
+      <td>{{ completed }}/{{ total }}</td>
+      <td>{{ percent }}</td>
+    </tr>
+  {% endfor %}
+</table>
 {% endblock %}

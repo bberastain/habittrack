@@ -6,6 +6,7 @@ from flask_login import current_user, login_required
 from app.models import Habit, Completed
 from datetime import date
 from app.main import bp
+from decimal import Decimal, getcontext
 
 
 # the "sessions" started could be a security hazard,
@@ -137,17 +138,21 @@ def edit():
 def stats():
     # for each habit display totals as a fraction and percentage
     today = date.today()
-    all_habits = Habit.query.filter_by(user_id=current_user.id).filter_by.all()
+    all_habits = Habit.query.filter_by(user_id=current_user.id).all()
+    hlist, tlist, clist, plist = [], [], [], []
     for habit in all_habits:
-        pass
-        # use 'datetime' module to find the difference in days here
-        # total = today - habit.start_date (find "length" as an integer)
-
-        # done = Completed.query.filter_by(habit_id=habit.id)
-        # further filter by completed.date <= habit.end_date
-        # then find the length of the list returned
-
-        # use 'decimal' module here to round to one or two places
-        # percentage = done/total
-
-    return render_template('stats.html', title='Habit Stats')
+        hlist.append(habit.habit)
+        difference = today - habit.start_date
+        total = difference.days + 1  # add one for fence-post problem
+        tlist.append(total)
+        completed = Completed.query.filter_by(habit_id=habit.id).all()
+        counter = 0
+        for instance in completed:
+            if instance.date <= today:
+                counter += 1
+        clist.append(counter)
+        getcontext().prec = 2
+        percent = int(Decimal(counter) / Decimal(total) * 100)
+        plist.append(percent)
+    stats = list(zip(hlist, tlist, clist, plist))
+    return render_template('stats.html', title='Habit Stats', stats=stats)
