@@ -1,2 +1,10 @@
-# habittrack
-to track my habits
+# HabitTrack
+
+Create an account to track your habits here
+habittrack.herokuapp.com
+
+Python application that uses the Flask microframework,
+runs on Heroku with a PostgreSQL database
+
+Application structure borrowed from Miguel Grinberg's tutorial
+blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-i-hello-world
