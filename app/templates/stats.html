@@ -2,11 +2,11 @@
 
 {% block app_content %}
 <h1>Habit Stats</h1>
-<table>
+<table class='table'>
   <tr>
-    <th>Habit</th>
-    <th>Total</th>
-    <th>%</th>
+    <th scope='column'>Habit</th>
+    <th scope='column'>Total</th>
+    <th scope='column'>%</th>
   </tr>
   {% for habit, total, completed, percent in stats %}
     <tr>

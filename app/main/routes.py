@@ -1,9 +1,9 @@
 from flask import session, render_template, flash, redirect, url_for, request
 from app import db
 from app.main.forms import CreateForm, SelectHabitForm, EditForm, \
-    CompleteForm, SelectDateForm
+    CompleteForm, SelectDateForm, BookForm
 from flask_login import current_user, login_required
-from app.models import Habit, Completed
+from app.models import Habit, Completed, Book
 from datetime import date
 from app.main import bp
 from decimal import Decimal, getcontext
@@ -33,8 +33,6 @@ def habits_given_date(day):
     return days_habits
 
 
-# still need to prepopulate with completed habits,
-# check them against submitted data, and edit database accordingly
 @bp.route('/', methods=['GET', 'POST'])
 @bp.route('/index', methods=['GET', 'POST'])
 @login_required
@@ -156,3 +154,18 @@ def stats():
         plist.append(percent)
     stats = list(zip(hlist, tlist, clist, plist))
     return render_template('stats.html', title='Habit Stats', stats=stats)
+
+
+@bp.route('/book', methods=['GET', 'POST'])
+@login_required
+def book():
+    form = BookForm()
+    books = Book.query.filter_by(user_id=current_user.id).all()
+    if form.validate_on_submit():
+        book = Book(title=form.title.data, author=form.author.data,
+                    date=form.date.data, user_id=current_user.id)
+        db.session.add(book)
+        db.session.commit()
+        flash('Book Log Updated')
+        return redirect(url_for('main.index'))
+    return render_template('book.html', title='Books', form=form, books=books)
