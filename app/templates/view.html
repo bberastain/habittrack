@@ -3,6 +3,7 @@
 {% block app_content %}
 
 <h3>Select Date Range</h3>
+
 <form name="form" action="" method="post">
   {{ form.hidden_tag() }}
 Start
@@ -11,12 +12,20 @@ End
   <p>{{ form.end }}</p>
   <p>{{ form.submit() }}</p>
 </form>
-<table class='table'>
-<tr>
-<th scope='column' >Habits</th>
-{% for date in dr %}
-<th scope='column'>{{ date }}</th>
-{% endfor %}
+
+<table class='table table-bordered'>
+  <tr>
+  <th scope='column' >Habits</th>
+  {% for date in dr %}
+  <th scope='column'>{{ date }}</th>
+  {% endfor %}
+  </tr>
+
+  {% for habit in h %}
+  <tr>
+    <td scope='row'>{{ habit.habit }}</td>
+  </tr>
+  {% endfor %}
 </table>
 
 {% endblock %}

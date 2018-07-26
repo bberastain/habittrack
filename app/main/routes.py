@@ -202,9 +202,22 @@ def view():
         d2 = date.today()
         d1 = d2 - timedelta(6)
     if form.validate_on_submit():
-        session['d1'] = form.start.data.strftime('%Y-%m-%d')
-        session['d2'] = form.end.data.strftime('%Y-%m-%d')
+        d1 = form.start.data
+        d2 = form.end.date
+        if d2 > d1:
+            session['d1'] = d1.strftime('%Y-%m-%d')
+            session['d2'] = d2.strftime('%Y-%m-%d')
+        else:
+            session['d2'] = d1.strftime('%Y-%m-%d')
+            session['d1'] = d2.strftime('%Y-%m-%d')
         return redirect(url_for('main.view'))
-    delta = abs(d2 - d1)
+    delta = d2 - d1
     date_range = [d1 + timedelta(i) for i in range(delta.days + 1)]
-    return render_template('view.html', form=form, dr=date_range)
+    all_habits = Habit.query.filter_by(user_id=current_user.id).all()
+    habits = []
+    for habit in all_habits:
+        if habit.end_date < d1 or habit.start_date > d2:
+            pass
+        else:
+            habits.append(habit)
+    return render_template('view.html', form=form, dr=date_range, h=habits)
