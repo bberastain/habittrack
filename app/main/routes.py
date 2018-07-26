@@ -1,9 +1,9 @@
 from flask import session, render_template, flash, redirect, url_for, request
 from app import db
 from app.main.forms import CreateForm, SelectHabitForm, EditForm, \
-    CompleteForm, SelectDateForm, BookForm, GoalForm
+    CompleteForm, SelectDateForm
 from flask_login import current_user, login_required
-from app.models import Habit, Completed, Book, Goal
+from app.models import Habit, Completed
 from datetime import date
 from app.main import bp
 from decimal import Decimal, getcontext
@@ -33,6 +33,8 @@ def habits_given_date(day):
     return days_habits
 
 
+# still need to prepopulate with completed habits,
+# check them against submitted data, and edit database accordingly
 @bp.route('/', methods=['GET', 'POST'])
 @bp.route('/index', methods=['GET', 'POST'])
 @login_required

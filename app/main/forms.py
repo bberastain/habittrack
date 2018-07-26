@@ -40,16 +40,3 @@ class CompleteForm(FlaskForm):
                                  widget=widgets.TableWidget(),
                                  option_widget=widgets.CheckboxInput())
     submit = SubmitField('Submit Completed Habits')
-
-
-class BookForm(FlaskForm):
-    title = StringField('Title', validators=[DataRequired()])
-    author = StringField('Author', validators=[Optional()])
-    date = DateField('Date Finished', default=date.today)
-    submit = SubmitField('Submit Finished Book')
-
-
-class GoalForm(FlaskForm):
-    goal = StringField('Goal', validators=[DataRequired()])
-    deadline = DateField('Deadline', default=date.today)
-    submit = SubmitField('Submit New Goal')

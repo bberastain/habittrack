@@ -68,29 +68,8 @@ class Habit(db.Model):
 
 class Completed(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    date = db.Column(db.Date)
+    date = db.Column(db.Date)  # the date of the view function?
     habit_id = db.Column(db.Integer, db.ForeignKey('habit.id'))
 
     def __repr__(self):
         return '<Completed: id-{}, date-{}>'.format(self.id, self.date)
-
-
-class Book(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(140))
-    author = db.Column(db.String(140))
-    date = db.Column(db.Date)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-
-    def __repr__(self):
-        return '<Id: {}, Title: {}>'.format(self.id, self.title)
-
-
-class Goal(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    goal = db.Column(db.String(140))
-    deadline = db.Column(db.Date)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-
-    def __repr__(self):
-        return '<Id: {}, Goal: {}>'.format(self.id, self.goal)
