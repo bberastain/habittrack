@@ -1,5 +1,4 @@
-2018-07-20 18:33:45,145 INFO: HabitTrack startup [in /home/bberastain/Desktop/habittrack/app/__init__.py:65]
-2018-07-20 20:44:28,853 ERROR: Exception on /stats [GET] [in /home/bberastain/Desktop/habittrack/venv/lib/python3.5/site-packages/flask/app.py:1761]
+2018-07-26 14:16:46,272 ERROR: Exception on /view [GET] [in /home/bberastain/Desktop/habittrack/venv/lib/python3.5/site-packages/flask/app.py:1761]
 Traceback (most recent call last):
   File "/home/bberastain/Desktop/habittrack/venv/lib/python3.5/site-packages/flask/app.py", line 2292, in wsgi_app
     response = self.full_dispatch_request()
@@ -15,64 +14,34 @@ Traceback (most recent call last):
     return self.view_functions[rule.endpoint](**req.view_args)
   File "/home/bberastain/Desktop/habittrack/venv/lib/python3.5/site-packages/flask_login/utils.py", line 261, in decorated_view
     return func(*args, **kwargs)
-  File "/home/bberastain/Desktop/habittrack/app/main/routes.py", line 140, in stats
-    today = date.today()
-AttributeError: 'function' object has no attribute 'all'
-2018-07-20 20:46:10,240 ERROR: Exception on /stats [GET] [in /home/bberastain/Desktop/habittrack/venv/lib/python3.5/site-packages/flask/app.py:1761]
-Traceback (most recent call last):
-  File "/home/bberastain/Desktop/habittrack/venv/lib/python3.5/site-packages/flask/app.py", line 2292, in wsgi_app
-    response = self.full_dispatch_request()
-  File "/home/bberastain/Desktop/habittrack/venv/lib/python3.5/site-packages/flask/app.py", line 1815, in full_dispatch_request
-    rv = self.handle_user_exception(e)
-  File "/home/bberastain/Desktop/habittrack/venv/lib/python3.5/site-packages/flask/app.py", line 1718, in handle_user_exception
+  File "/home/bberastain/Desktop/habittrack/app/main/routes.py", line 204, in view
+    return render_template('view.html', dr=date_range)
+  File "/home/bberastain/Desktop/habittrack/venv/lib/python3.5/site-packages/flask/templating.py", line 135, in render_template
+    context, ctx.app)
+  File "/home/bberastain/Desktop/habittrack/venv/lib/python3.5/site-packages/flask/templating.py", line 117, in _render
+    rv = template.render(context)
+  File "/home/bberastain/Desktop/habittrack/venv/lib/python3.5/site-packages/jinja2/environment.py", line 1008, in render
+    return self.environment.handle_exception(exc_info, True)
+  File "/home/bberastain/Desktop/habittrack/venv/lib/python3.5/site-packages/jinja2/environment.py", line 780, in handle_exception
     reraise(exc_type, exc_value, tb)
-  File "/home/bberastain/Desktop/habittrack/venv/lib/python3.5/site-packages/flask/_compat.py", line 35, in reraise
-    raise value
-  File "/home/bberastain/Desktop/habittrack/venv/lib/python3.5/site-packages/flask/app.py", line 1813, in full_dispatch_request
-    rv = self.dispatch_request()
-  File "/home/bberastain/Desktop/habittrack/venv/lib/python3.5/site-packages/flask/app.py", line 1799, in dispatch_request
-    return self.view_functions[rule.endpoint](**req.view_args)
-  File "/home/bberastain/Desktop/habittrack/venv/lib/python3.5/site-packages/flask_login/utils.py", line 261, in decorated_view
-    return func(*args, **kwargs)
-  File "/home/bberastain/Desktop/habittrack/app/main/routes.py", line 140, in stats
-    today = date.today()
-AttributeError: 'function' object has no attribute 'all'
-2018-07-20 21:00:58,839 ERROR: Exception on /stats [GET] [in /home/bberastain/Desktop/habittrack/venv/lib/python3.5/site-packages/flask/app.py:1761]
-Traceback (most recent call last):
-  File "/home/bberastain/Desktop/habittrack/venv/lib/python3.5/site-packages/flask/app.py", line 2292, in wsgi_app
-    response = self.full_dispatch_request()
-  File "/home/bberastain/Desktop/habittrack/venv/lib/python3.5/site-packages/flask/app.py", line 1815, in full_dispatch_request
-    rv = self.handle_user_exception(e)
-  File "/home/bberastain/Desktop/habittrack/venv/lib/python3.5/site-packages/flask/app.py", line 1718, in handle_user_exception
-    reraise(exc_type, exc_value, tb)
-  File "/home/bberastain/Desktop/habittrack/venv/lib/python3.5/site-packages/flask/_compat.py", line 35, in reraise
-    raise value
-  File "/home/bberastain/Desktop/habittrack/venv/lib/python3.5/site-packages/flask/app.py", line 1813, in full_dispatch_request
-    rv = self.dispatch_request()
-  File "/home/bberastain/Desktop/habittrack/venv/lib/python3.5/site-packages/flask/app.py", line 1799, in dispatch_request
-    return self.view_functions[rule.endpoint](**req.view_args)
-  File "/home/bberastain/Desktop/habittrack/venv/lib/python3.5/site-packages/flask_login/utils.py", line 261, in decorated_view
-    return func(*args, **kwargs)
-  File "/home/bberastain/Desktop/habittrack/app/main/routes.py", line 140, in stats
-    today = date.today()
-AttributeError: 'function' object has no attribute 'all'
-2018-07-20 21:01:00,154 ERROR: Exception on /stats [GET] [in /home/bberastain/Desktop/habittrack/venv/lib/python3.5/site-packages/flask/app.py:1761]
-Traceback (most recent call last):
-  File "/home/bberastain/Desktop/habittrack/venv/lib/python3.5/site-packages/flask/app.py", line 2292, in wsgi_app
-    response = self.full_dispatch_request()
-  File "/home/bberastain/Desktop/habittrack/venv/lib/python3.5/site-packages/flask/app.py", line 1815, in full_dispatch_request
-    rv = self.handle_user_exception(e)
-  File "/home/bberastain/Desktop/habittrack/venv/lib/python3.5/site-packages/flask/app.py", line 1718, in handle_user_exception
-    reraise(exc_type, exc_value, tb)
-  File "/home/bberastain/Desktop/habittrack/venv/lib/python3.5/site-packages/flask/_compat.py", line 35, in reraise
-    raise value
-  File "/home/bberastain/Desktop/habittrack/venv/lib/python3.5/site-packages/flask/app.py", line 1813, in full_dispatch_request
-    rv = self.dispatch_request()
-  File "/home/bberastain/Desktop/habittrack/venv/lib/python3.5/site-packages/flask/app.py", line 1799, in dispatch_request
-    return self.view_functions[rule.endpoint](**req.view_args)
-  File "/home/bberastain/Desktop/habittrack/venv/lib/python3.5/site-packages/flask_login/utils.py", line 261, in decorated_view
-    return func(*args, **kwargs)
-  File "/home/bberastain/Desktop/habittrack/app/main/routes.py", line 140, in stats
-    today = date.today()
-AttributeError: 'function' object has no attribute 'all'
-2018-07-20 21:01:13,718 INFO: HabitTrack startup [in /home/bberastain/Desktop/habittrack/app/__init__.py:65]
+  File "/home/bberastain/Desktop/habittrack/venv/lib/python3.5/site-packages/jinja2/_compat.py", line 37, in reraise
+    raise value.with_traceback(tb)
+  File "/home/bberastain/Desktop/habittrack/app/templates/view.html", line 1, in top-level template code
+    {% extends 'base.html' %}
+  File "/home/bberastain/Desktop/habittrack/app/templates/base.html", line 1, in top-level template code
+    {% extends 'bootstrap/base.html' %}
+  File "/home/bberastain/Desktop/habittrack/venv/lib/python3.5/site-packages/flask_bootstrap/templates/bootstrap/base.html", line 1, in top-level template code
+    {% block doc -%}
+  File "/home/bberastain/Desktop/habittrack/venv/lib/python3.5/site-packages/flask_bootstrap/templates/bootstrap/base.html", line 4, in block "doc"
+    {%- block html %}
+  File "/home/bberastain/Desktop/habittrack/venv/lib/python3.5/site-packages/flask_bootstrap/templates/bootstrap/base.html", line 20, in block "html"
+    {% block body -%}
+  File "/home/bberastain/Desktop/habittrack/venv/lib/python3.5/site-packages/flask_bootstrap/templates/bootstrap/base.html", line 23, in block "body"
+    {% block content -%}
+  File "/home/bberastain/Desktop/habittrack/app/templates/base.html", line 51, in block "content"
+    {% block app_content %}{% endblock %}
+  File "/home/bberastain/Desktop/habittrack/app/templates/view.html", line 7, in block "app_content"
+    {{ form.hidden_tag() }}
+  File "/home/bberastain/Desktop/habittrack/venv/lib/python3.5/site-packages/jinja2/environment.py", line 430, in getattr
+    return getattr(obj, attribute)
+jinja2.exceptions.UndefinedError: 'form' is undefined

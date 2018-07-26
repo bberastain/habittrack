@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block app_content %}
+
+<h3>Select Date Range</h3>
+<form name="form" action="" method="post">
+  {{ form.hidden_tag() }}
+Start
+  <p>{{ form.start }}</p>
+End
+  <p>{{ form.end }}</p>
+  <p>{{ form.submit() }}</p>
+</form>
+<table class='table'>
+<tr>
+<th scope='column' >Habits</th>
+{% for date in dr %}
+<th scope='column'>{{ date }}</th>
+{% endfor %}
+</table>
+
+{% endblock %}

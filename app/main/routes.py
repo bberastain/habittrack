@@ -1,10 +1,10 @@
 from flask import session, render_template, flash, redirect, url_for, request
 from app import db
 from app.main.forms import CreateForm, SelectHabitForm, EditForm, \
-    CompleteForm, SelectDateForm, BookForm, GoalForm
+    CompleteForm, SelectDateForm, BookForm, GoalForm, DateRangeForm
 from flask_login import current_user, login_required
 from app.models import Habit, Completed, Book, Goal
-from datetime import date
+from datetime import date, timedelta
 from app.main import bp
 from decimal import Decimal, getcontext
 
@@ -83,7 +83,11 @@ def index():
         session['today'] = sdform.select_date.data.strftime('%Y-%m-%d')
         return redirect(url_for('main.index'))
 
-    goals = Goal.query.filter_by(user_id=current_user.id).all()
+    all_goals = Goal.query.filter_by(user_id=current_user.id).all()
+    goals = []
+    for goal in all_goals:
+        if goal.deadline >= ddate:
+            goals.append(goal)
     return render_template('index.html', hform=hform, sdform=sdform,
                            d1=date.today(), d2=ddate, days_habits=days_habits,
                            goals=goals)
@@ -185,3 +189,22 @@ def goal():
         flash('New Goal Created')
         return redirect(url_for('main.index'))
     return render_template('goal.html', title='Goal', form=form)
+
+
+@bp.route('/view', methods=['GET', 'POST'])
+@login_required
+def view():
+    form = DateRangeForm()
+    if session.get('d1'):
+        d1 = date_from_string(session['d1'])
+        d2 = date_from_string(session['d2'])
+    else:
+        d2 = date.today()
+        d1 = d2 - timedelta(6)
+    if form.validate_on_submit():
+        session['d1'] = form.start.data.strftime('%Y-%m-%d')
+        session['d2'] = form.end.data.strftime('%Y-%m-%d')
+        return redirect(url_for('main.view'))
+    delta = abs(d2 - d1)
+    date_range = [d1 + timedelta(i) for i in range(delta.days + 1)]
+    return render_template('view.html', form=form, dr=date_range)

@@ -53,3 +53,9 @@ class GoalForm(FlaskForm):
     goal = StringField('Goal', validators=[DataRequired()])
     deadline = DateField('Deadline', default=date.today)
     submit = SubmitField('Submit New Goal')
+
+
+class DateRangeForm(FlaskForm):
+    start = DateField('Start Date', validators=[DataRequired()])
+    end = DateField('End Date', validators=[DataRequired()])
+    submit = SubmitField('View Date Range')
