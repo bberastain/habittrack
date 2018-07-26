@@ -158,32 +158,3 @@ def stats():
         plist.append(percent)
     stats = list(zip(hlist, tlist, clist, plist))
     return render_template('stats.html', title='Habit Stats', stats=stats)
-
-
-@bp.route('/book', methods=['GET', 'POST'])
-@login_required
-def book():
-    form = BookForm()
-    books = Book.query.filter_by(user_id=current_user.id).all()
-    if form.validate_on_submit():
-        book = Book(title=form.title.data, author=form.author.data,
-                    date=form.date.data, user_id=current_user.id)
-        db.session.add(book)
-        db.session.commit()
-        flash('Book Log Updated')
-        return redirect(url_for('main.index'))
-    return render_template('book.html', title='Books', form=form, books=books)
-
-
-@bp.route('/goal', methods=['GET', 'POST'])
-@login_required
-def goal():
-    form = GoalForm()
-    if form.validate_on_submit():
-        goal = Goal(goal=form.goal.data, deadline=form.deadline.data,
-                    user_id=current_user.id)
-        db.session.add(goal)
-        db.session.commit()
-        flash('New Goal Created')
-        return redirect(url_for('main.index'))
-    return render_template('goal.html', title='Goal', form=form)
