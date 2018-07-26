@@ -32,4 +32,22 @@
 
   <p>{{ sdform.submit() }}</p>
 </form>
+
+{% if goals %}
+<h1>Current Goals</h1>
+<table class='table'>
+  <tr>
+    <th scope='column'>#</th>
+    <th scope='column'>Goal</th>
+    <th scope='column'>Deadline</th>
+  </tr>
+{% for goal in goals %}
+  <tr>
+    <td scope='row'>{{ loop.index }}</td>
+    <td scope='row'>{{ goal.goal }}</td>
+    <td scope='row'>{{ goal.deadline }}</td>
+  </tr>
+{% endfor %}
+</table>
+{% endif %}
 {% endblock %}

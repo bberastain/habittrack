@@ -47,3 +47,9 @@ class BookForm(FlaskForm):
     author = StringField('Author', validators=[Optional()])
     date = DateField('Date Finished', default=date.today)
     submit = SubmitField('Submit Finished Book')
+
+
+class GoalForm(FlaskForm):
+    goal = StringField('Goal', validators=[DataRequired()])
+    deadline = DateField('Deadline', default=date.today)
+    submit = SubmitField('Submit New Goal')

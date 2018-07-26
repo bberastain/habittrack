@@ -83,5 +83,14 @@ class Book(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
     def __repr__(self):
-        return '<Id: {}, Title: {}, Author: {}, Date Finished: {}>'.format(
-            self.id, self.title, self.author, self.date)
+        return '<Id: {}, Title: {}>'.format(self.id, self.title)
+
+
+class Goal(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    goal = db.Column(db.String(140))
+    deadline = db.Column(db.Date)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+
+    def __repr__(self):
+        return '<Id: {}, Goal: {}>'.format(self.id, self.goal)

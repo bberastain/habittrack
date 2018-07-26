@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block app_content %}
+<h1>Add A Goal</h1>
+<form name="form" action="" method="post">
+  {{ form.hidden_tag() }}
+Goal
+  <p>{{ form.goal }}</p>
+Deadline
+  <p>{{ form.deadline }}</p>
+  <p>{{ form.submit() }}</p>
+</form>
+
+{% endblock %}

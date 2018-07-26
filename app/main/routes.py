@@ -1,9 +1,9 @@
 from flask import session, render_template, flash, redirect, url_for, request
 from app import db
 from app.main.forms import CreateForm, SelectHabitForm, EditForm, \
-    CompleteForm, SelectDateForm, BookForm
+    CompleteForm, SelectDateForm, BookForm, GoalForm
 from flask_login import current_user, login_required
-from app.models import Habit, Completed, Book
+from app.models import Habit, Completed, Book, Goal
 from datetime import date
 from app.main import bp
 from decimal import Decimal, getcontext
@@ -83,8 +83,10 @@ def index():
         session['today'] = sdform.select_date.data.strftime('%Y-%m-%d')
         return redirect(url_for('main.index'))
 
+    goals = Goal.query.filter_by(user_id=current_user.id).all()
     return render_template('index.html', hform=hform, sdform=sdform,
-                           d1=date.today(), d2=ddate, days_habits=days_habits)
+                           d1=date.today(), d2=ddate, days_habits=days_habits,
+                           goals=goals)
 
 
 @bp.route('/create', methods=['GET', 'POST'])
@@ -169,3 +171,17 @@ def book():
         flash('Book Log Updated')
         return redirect(url_for('main.index'))
     return render_template('book.html', title='Books', form=form, books=books)
+
+
+@bp.route('/goal', methods=['GET', 'POST'])
+@login_required
+def goal():
+    form = GoalForm()
+    if form.validate_on_submit():
+        goal = Goal(goal=form.goal.data, deadline=form.deadline.data,
+                    user_id=current_user.id)
+        db.session.add(goal)
+        db.session.commit()
+        flash('New Goal Created')
+        return redirect(url_for('main.index'))
+    return render_template('goal.html', title='Goal', form=form)
