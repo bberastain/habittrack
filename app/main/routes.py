@@ -234,6 +234,7 @@ def view():
                 else:
                     habits[counter].append('')
             counter += 1
-    length = len(habits) + 1
+    hl = len(habits) + 1  # habits length
+    drl = len(date_range) + 1  # date range length
     return render_template('view.html', form=form, dr=date_range, h=habits,
-                           length=length)
+                           hl=hl, drl=drl)
