@@ -203,7 +203,7 @@ def view():
         d1 = d2 - timedelta(6)
     if form.validate_on_submit():
         d1 = form.start.data
-        d2 = form.end.date
+        d2 = form.end.data
         if d2 > d1:
             session['d1'] = d1.strftime('%Y-%m-%d')
             session['d2'] = d2.strftime('%Y-%m-%d')
@@ -213,11 +213,27 @@ def view():
         return redirect(url_for('main.view'))
     delta = d2 - d1
     date_range = [d1 + timedelta(i) for i in range(delta.days + 1)]
+
+    # create a dictionary of habits with completed dates
     all_habits = Habit.query.filter_by(user_id=current_user.id).all()
-    habits = []
+    habits = {}
+    counter = 1
     for habit in all_habits:
         if habit.end_date < d1 or habit.start_date > d2:
             pass
         else:
-            habits.append(habit)
-    return render_template('view.html', form=form, dr=date_range, h=habits)
+            habits[counter] = [habit]
+            completed = Completed.query.filter_by(habit_id=habit.id).all()
+            completed_dates = [c.date for c in completed]
+            for day in date_range:
+                if completed:
+                    if day in completed_dates:
+                        habits[counter].append('X')
+                    else:
+                        habits[counter].append('')
+                else:
+                    habits[counter].append('')
+            counter += 1
+    length = len(habits) + 1
+    return render_template('view.html', form=form, dr=date_range, h=habits,
+                           length=length)

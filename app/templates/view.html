@@ -21,9 +21,9 @@ End
   {% endfor %}
   </tr>
 
-  {% for habit in h %}
+  {% for i in range(1, length) %}
   <tr>
-    <td scope='row'>{{ habit.habit }}</td>
+    <td scope='row'>{{ h[i][0].habit }}</td>
   </tr>
   {% endfor %}
 </table>
