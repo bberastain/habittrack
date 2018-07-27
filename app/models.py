@@ -85,3 +85,14 @@ class Book(db.Model):
     def __repr__(self):
         return '<Id: {}, Title: {}, Author: {}, Date Finished: {}>'.format(
             self.id, self.title, self.author, self.date)
+
+
+class Life(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    year = db.Column(db.Integer)
+    week = db.Column(db.Integer)
+    content = db.Column(db.String(280))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+
+    def __repr__(self):
+        return '<Year: {}, Week: {}>'.format(self.year, self.week)

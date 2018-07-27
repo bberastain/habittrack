@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block app_content %}
+
+<h1>Life In Weeks</h1>
+
+<div class='table-responsive'>
+<table class='table table-bordered'>
+  <tr>
+  <th scope='column' ></th>
+  {% for i in range(1, 53) %}
+  <th scope='column'>{{ i }}</th>
+  {% endfor %}
+  </tr>
+
+  {% for year in range(start, end) %}
+  {% if life[year] %}
+  <tr>
+    <td scope='row'>{{ year }}</td>
+    {% for week in life[year] %}
+    <td>{{ week.content }}</td>
+    {% endfor %}
+  </tr>
+  {% endif %}
+  {% endfor %}
+</table>
+</div>
+<h3>Add a weekly highlight</h3>
+<form name="form" action="" method="post">
+  {{ form.hidden_tag() }}
+Year
+  <p>{{ form.year }}</p>
+Week
+  <p>{{ form.week }}</p>
+Content
+  <p>{{ form.content }}</p>
+  <p>{{ form.submit() }}</p>
+</form>
+
+{% endblock %}

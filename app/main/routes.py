@@ -1,9 +1,9 @@
 from flask import session, render_template, flash, redirect, url_for, request
 from app import db
 from app.main.forms import CreateForm, SelectHabitForm, EditForm, \
-    CompleteForm, SelectDateForm, BookForm, DateRangeForm
+    CompleteForm, SelectDateForm, BookForm, DateRangeForm, WeekForm
 from flask_login import current_user, login_required
-from app.models import Habit, Completed, Book
+from app.models import Habit, Completed, Book, Life
 from datetime import date, timedelta
 from app.main import bp
 from decimal import Decimal, getcontext
@@ -193,11 +193,19 @@ def view():
             session['d2'] = d1.strftime('%Y-%m-%d')
             session['d1'] = d2.strftime('%Y-%m-%d')
         return redirect(url_for('main.view'))
+
+    all_habits = Habit.query.filter_by(user_id=current_user.id).all()
+    esdate = min([habit.start_date for habit in all_habits])  # earliest start
+    if d2 > date.today():
+        d2 = date.today()
+    if d1 < esdate:
+        d1 = esdate
+        flash('No habit starts before ' + d1.strftime('%Y-%m-%d'))
+
     delta = d2 - d1
     date_range = [d1 + timedelta(i) for i in range(delta.days + 1)]
 
     # create a dictionary of habits with completed dates
-    all_habits = Habit.query.filter_by(user_id=current_user.id).all()
     habits = {}
     counter = 1
     for habit in all_habits:
@@ -220,3 +228,45 @@ def view():
     drl = len(date_range) + 1  # date range length
     return render_template('view.html', form=form, dr=date_range, h=habits,
                            hl=hl, drl=drl)
+
+
+@bp.route('/life', methods=['GET', 'POST'])
+@login_required
+def life():
+    form = WeekForm()
+    if form.validate_on_submit():
+        x = Life.query.filter_by(year=form.year.data).filter_by(
+                week=form.week.data).all()
+        if x:  # here there needs to be an 'overwrite' warning
+            x[0].content = form.content.data
+        else:
+            week = Life(year=form.year.data, week=form.week.data,
+                        content=form.content.data, user_id=current_user.id)
+            db.session.add(week)
+        db.session.commit()
+        flash('Updated Life in Weeks')
+        return redirect(url_for('main.life'))
+    weeks = Life.query.filter_by(user_id=current_user.id).order_by(
+            Life.year).all()  # this is to find the earliest year
+    fy = weeks[0].year  # first year
+    ly = weeks[-1].year + 1  # last year adjusted for range function
+    life = {}
+    counter1 = fy
+    for year in range(fy, ly):
+        weeks = Life.query.filter_by(user_id=current_user.id).filter_by(
+                year=year).order_by(Life.week).all()
+        week_nums = [a.week for a in weeks]
+        temp = []
+        counter2 = 0
+        for i in range(0, 52):
+            if i + 1 in week_nums:
+                temp.append(weeks[counter2])
+                counter2 += 1
+            else:
+                temp.append('')
+        if weeks:
+            life[counter1] = temp
+        else:
+            life[counter1] = []
+        counter1 += 1
+    return render_template('life.html', start=fy, end=ly, life=life, form=form)

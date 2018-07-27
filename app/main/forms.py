@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, SelectField, \
-                    SelectMultipleField, widgets
+                    SelectMultipleField, IntegerField, TextAreaField, widgets
 from wtforms.fields.html5 import DateField
 from wtforms.validators import DataRequired, Optional
 from datetime import date
@@ -53,3 +53,10 @@ class DateRangeForm(FlaskForm):
     start = DateField('Start Date', validators=[DataRequired()])
     end = DateField('End Date', validators=[DataRequired()])
     submit = SubmitField('View Date Range')
+
+
+class WeekForm(FlaskForm):
+    year = IntegerField('Year', validators=[DataRequired()])
+    week = IntegerField('Week', validators=[DataRequired()])
+    content = TextAreaField('Content', validators=[DataRequired()])
+    submit = SubmitField('Submit')
