@@ -18,6 +18,8 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(120), index=True, unique=True)
     password_hash = db.Column(db.String(128))
     habit = db.relationship('Habit', backref='author', lazy='dynamic')
+    book = db.relationship('Book', backref='reader', lazy='dynamic')
+    life = db.relationship('Life', backref='person', lazy='dynamic')
 
 # the backref creates a habit.author expression
 # that returns the user given the habit
