@@ -3,7 +3,7 @@ from app import db
 from app.main.forms import CreateForm, SelectHabitForm, EditForm, \
     CompleteForm, SelectDateForm, BookForm, DateRangeForm
 from flask_login import current_user, login_required
-from app.models import Habit, Completed, Book, Goal
+from app.models import Habit, Completed, Book
 from datetime import date, timedelta
 from app.main import bp
 from decimal import Decimal, getcontext
