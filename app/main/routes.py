@@ -250,7 +250,7 @@ def life():
         weeks = Life.query.filter_by(user_id=current_user.id).order_by(
             Life.year).all()  # this is to find the earliest year
     except:
-        pass
+        weeks = []
     if weeks:
         fy = weeks[0].year  # first year
         ly = weeks[-1].year + 1  # last year adjusted for range function
