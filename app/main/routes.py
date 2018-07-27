@@ -85,14 +85,8 @@ def index():
         session['today'] = sdform.select_date.data.strftime('%Y-%m-%d')
         return redirect(url_for('main.index'))
 
-    all_goals = Goal.query.filter_by(user_id=current_user.id).all()
-    goals = []
-    for goal in all_goals:
-        if goal.deadline >= ddate:
-            goals.append(goal)
     return render_template('index.html', hform=hform, sdform=sdform,
-                           d1=date.today(), d2=ddate, days_habits=days_habits,
-                           goals=goals)
+                           d1=date.today(), d2=ddate, days_habits=days_habits)
 
 
 @bp.route('/create', methods=['GET', 'POST'])
