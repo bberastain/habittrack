@@ -1,10 +1,10 @@
 from flask import session, render_template, flash, redirect, url_for, request
 from app import db
 from app.main.forms import CreateForm, SelectHabitForm, EditForm, \
-    CompleteForm, SelectDateForm
+    CompleteForm, SelectDateForm, BookForm, DateRangeForm
 from flask_login import current_user, login_required
-from app.models import Habit, Completed
-from datetime import date
+from app.models import Habit, Completed, Book, Goal
+from datetime import date, timedelta
 from app.main import bp
 from decimal import Decimal, getcontext
 
@@ -85,7 +85,11 @@ def index():
         session['today'] = sdform.select_date.data.strftime('%Y-%m-%d')
         return redirect(url_for('main.index'))
 
-    goals = Goal.query.filter_by(user_id=current_user.id).all()
+    all_goals = Goal.query.filter_by(user_id=current_user.id).all()
+    goals = []
+    for goal in all_goals:
+        if goal.deadline >= ddate:
+            goals.append(goal)
     return render_template('index.html', hform=hform, sdform=sdform,
                            d1=date.today(), d2=ddate, days_habits=days_habits,
                            goals=goals)
@@ -158,3 +162,67 @@ def stats():
         plist.append(percent)
     stats = list(zip(hlist, tlist, clist, plist))
     return render_template('stats.html', title='Habit Stats', stats=stats)
+
+
+@bp.route('/book', methods=['GET', 'POST'])
+@login_required
+def book():
+    form = BookForm()
+    books = Book.query.filter_by(user_id=current_user.id).all()
+    if form.validate_on_submit():
+        book = Book(title=form.title.data, author=form.author.data,
+                    date=form.date.data, user_id=current_user.id)
+        db.session.add(book)
+        db.session.commit()
+        flash('Book Log Updated')
+        return redirect(url_for('main.index'))
+    return render_template('book.html', title='Books', form=form, books=books)
+
+
+@bp.route('/view', methods=['GET', 'POST'])
+@login_required
+def view():
+    form = DateRangeForm()
+    if session.get('d1'):
+        d1 = date_from_string(session['d1'])
+        d2 = date_from_string(session['d2'])
+    else:
+        d2 = date.today()
+        d1 = d2 - timedelta(6)
+    if form.validate_on_submit():
+        d1 = form.start.data
+        d2 = form.end.data
+        if d2 > d1:
+            session['d1'] = d1.strftime('%Y-%m-%d')
+            session['d2'] = d2.strftime('%Y-%m-%d')
+        else:
+            session['d2'] = d1.strftime('%Y-%m-%d')
+            session['d1'] = d2.strftime('%Y-%m-%d')
+        return redirect(url_for('main.view'))
+    delta = d2 - d1
+    date_range = [d1 + timedelta(i) for i in range(delta.days + 1)]
+
+    # create a dictionary of habits with completed dates
+    all_habits = Habit.query.filter_by(user_id=current_user.id).all()
+    habits = {}
+    counter = 1
+    for habit in all_habits:
+        if habit.end_date < d1 or habit.start_date > d2:
+            pass
+        else:
+            habits[counter] = [habit]
+            completed = Completed.query.filter_by(habit_id=habit.id).all()
+            completed_dates = [c.date for c in completed]
+            for day in date_range:
+                if completed:
+                    if day in completed_dates:
+                        habits[counter].append('X')
+                    else:
+                        habits[counter].append('')
+                else:
+                    habits[counter].append('')
+            counter += 1
+    hl = len(habits) + 1  # habits length
+    drl = len(date_range) + 1  # date range length
+    return render_template('view.html', form=form, dr=date_range, h=habits,
+                           hl=hl, drl=drl)

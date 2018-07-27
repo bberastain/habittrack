@@ -24,10 +24,12 @@
                 {% if current_user.is_anonymous %}
                 <li><a href="{{ url_for('auth.login') }}">Login</a></li>
                 {% else %}
-                <li><a href="{{ url_for('auth.logout') }}">Logout</a></li>
                 <li><a href="{{ url_for('main.create') }}">Create Habit</a></li>
                 <li><a href="{{ url_for('main.select_habit') }}">Edit Habits</a></li>
+                <li><a href="{{ url_for('main.view') }}">Custom View</a></li>
+                <li><a href="{{ url_for('main.book') }}">Book Log</a></li>
                 <li><a href="{{ url_for('main.stats') }}">Stats</a></li>
+                <li><a href="{{ url_for('auth.logout') }}">Logout</a></li>
                 {% endif %}
             </ul>
         </div>
