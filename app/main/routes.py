@@ -248,25 +248,29 @@ def life():
         return redirect(url_for('main.life'))
     weeks = Life.query.filter_by(user_id=current_user.id).order_by(
             Life.year).all()  # this is to find the earliest year
-    fy = weeks[0].year  # first year
-    ly = weeks[-1].year + 1  # last year adjusted for range function
-    life = {}
-    counter1 = fy
-    for year in range(fy, ly):
-        weeks = Life.query.filter_by(user_id=current_user.id).filter_by(
-                year=year).order_by(Life.week).all()
-        week_nums = [a.week for a in weeks]
-        temp = []
-        counter2 = 0
-        for i in range(0, 52):
-            if i + 1 in week_nums:
-                temp.append(weeks[counter2])
-                counter2 += 1
+    if weeks:
+        fy = weeks[0].year  # first year
+        ly = weeks[-1].year + 1  # last year adjusted for range function
+        life = {}
+        counter1 = fy
+        for year in range(fy, ly):
+            weeks = Life.query.filter_by(user_id=current_user.id).filter_by(
+                    year=year).order_by(Life.week).all()
+            week_nums = [a.week for a in weeks]
+            temp = []
+            counter2 = 0
+            for i in range(0, 52):
+                if i + 1 in week_nums:
+                    temp.append(weeks[counter2])
+                    counter2 += 1
+                else:
+                    temp.append('')
+            if weeks:
+                life[counter1] = temp
             else:
-                temp.append('')
-        if weeks:
-            life[counter1] = temp
-        else:
-            life[counter1] = []
-        counter1 += 1
-    return render_template('life.html', start=fy, end=ly, life=life, form=form)
+                life[counter1] = []
+            counter1 += 1
+        return render_template('life.html', start=fy, end=ly, life=life,
+                               form=form)
+    else:
+        return render_template('life.html', form=form)

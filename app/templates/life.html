@@ -12,7 +12,7 @@
   <th scope='column'>{{ i }}</th>
   {% endfor %}
   </tr>
-
+{% if start %}
   {% for year in range(start, end) %}
   {% if life[year] %}
   <tr>
@@ -25,6 +25,12 @@
   {% endfor %}
 </table>
 </div>
+{% else %}
+</table>
+</div>
+<h4>Create your first entry to document your life in weeks</h4>
+{% endif %}
+
 <h3>Add a weekly highlight</h3>
 <form name="form" action="" method="post">
   {{ form.hidden_tag() }}
