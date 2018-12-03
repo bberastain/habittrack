@@ -9,4 +9,8 @@ runs on Heroku with a PostgreSQL database
 Application structure borrowed from Miguel Grinberg's tutorial
 blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-i-hello-world
 
-[Alt text](pics/habittrack1.jpg?raw=true "Logged In")
+Logged In View
+[Example Pic 1](pics/habittrack1.jpg?raw=true "Logged In")
+[Example Pic 2](pics/habittrack2.jpg?raw=true "Logged In")
+[Example Pic 3](pics/habittrack3.jpg?raw=true "Logged In")
+[Example Pic 4](pics/habittrack4.jpg?raw=true "Logged In")
