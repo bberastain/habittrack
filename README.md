@@ -10,7 +10,9 @@ Application structure borrowed from Miguel Grinberg's tutorial
 blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-i-hello-world
 
 Logged In View
-[Example Pic 1](pics/habittrack1.jpg?raw=true "Logged In")
-[Example Pic 2](pics/habittrack2.jpg?raw=true "Logged In")
-[Example Pic 3](pics/habittrack3.jpg?raw=true "Logged In")
-[Example Pic 4](pics/habittrack4.jpg?raw=true "Logged In")
+[Example Pic 1](pics/habittrack1.jpg?raw=true "Logged In"),
+[Example Pic 2](pics/habittrack2.jpg?raw=true "Logged In"),
+[Example Pic 3](pics/habittrack3.jpg?raw=true "Logged In"),
+[Example Pic 4](pics/habittrack4.jpg?raw=true "Logged In"),
+
+View the principal [Database Schema](pics/habittrack.png?raw=true "Logged In")
